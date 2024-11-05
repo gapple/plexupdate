@@ -313,7 +313,10 @@ if [ -z "${DISTRO_INSTALL}" ]; then
 		elif [ -f /etc/synoinfo.conf ]; then
 			DISTRO="synology"
 			if grep -q "major=\"7\"" /etc/VERSION; then
-				DISTRO="synology-dsm7"
+				DISTRO="synology-dsm72"
+				if [ grep -q "minor=\"[01]\"" /etc/VERSION ]; then
+					DISTRO="synology-dsm7"
+	 			fi
 			fi
 			DISTRO_INSTALL="synopkg install"
 		else

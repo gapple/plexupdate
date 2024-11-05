@@ -312,13 +312,13 @@ if [ -z "${DISTRO_INSTALL}" ]; then
 			fi
 		elif [ -f /etc/synoinfo.conf ]; then
 			DISTRO="synology"
+			DISTRO_INSTALL="synopkg install"
 			if grep -q "major=\"7\"" /etc/VERSION; then
 				DISTRO="synology-dsm72"
 				if grep -q "minor=\"[01]\"" /etc/VERSION; then
 					DISTRO="synology-dsm7"
 	 			fi
 			fi
-			DISTRO_INSTALL="synopkg install"
 		else
 			DISTRO="debian"
 			DISTRO_INSTALL="${DEBIAN_INSTALL}"
@@ -504,8 +504,8 @@ if [ "${AUTOINSTALL}" = "yes" ]; then
 		# Clarify why this failed, so user won't be left in the dark
 		error "Failed to install update. Command '${DISTRO_INSTALL} "${DOWNLOADDIR}/${FILENAME}"' returned error code ${RET}"
 		if [ ${RET} -eq 1 ]; then
-			if [ "${DISTRO}" = "synology" || "${DISTRO}" = "synology-dsm7" ]; then
-				error "On Synology devices, you need to add Plex's public key to Package Center. If you have not done so, follow the instructions at https://support.plex.tv/articles/205165858-how-to-add-plex-s-package-signing-public-key-to-synology-nas-package-center/"
+			if [ "${DISTRO}" = "synology" ]; then
+				error "On Synology DSM6 devices, you need to add Plex's public key to Package Center. If you have not done so, follow the instructions at https://support.plex.tv/articles/205165858-how-to-add-plex-s-package-signing-public-key-to-synology-nas-package-center/"
 			fi
 		fi
 		exit ${RET}
@@ -522,13 +522,13 @@ if [ "${AUTODELETE}" = "yes" ]; then
 fi
 
 if [ "${AUTOSTART}" = "yes" ]; then
-	if [ "${DISTRO}" != "redhat" -a "${DISTRO}" != "synology" -a "${DISTRO}" != "synology-dsm7" ]; then
+	if [ "${DISTRO}" != "redhat" -a $(echo "${DISTRO}" | cut -c -8) != "synology"]; then
 		warn "The AUTOSTART [-s] option may not be needed on your distribution."
 	fi
 
 	if [ "${DISTRO}" = "synology" ]; then
 		synopkg start "Plex Media Server"
-	elif [ "${DISTRO}" = "synology-dsm7" ]; then
+	elif [ $(echo "${DISTRO}" | cut -c -13) = "synology-dsm7" ]; then
 		synopkg start "PlexMediaServer"
 	elif hash systemctl 2>/dev/null; then
 		systemctl start "$SYSTEMDUNIT"

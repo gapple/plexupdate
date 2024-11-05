@@ -314,7 +314,7 @@ if [ -z "${DISTRO_INSTALL}" ]; then
 			DISTRO="synology"
 			if grep -q "major=\"7\"" /etc/VERSION; then
 				DISTRO="synology-dsm72"
-				if [ grep -q "minor=\"[01]\"" /etc/VERSION ]; then
+				if grep -q "minor=\"[01]\"" /etc/VERSION; then
 					DISTRO="synology-dsm7"
 	 			fi
 			fi
